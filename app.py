@@ -39,7 +39,6 @@ def home():
     global admin_confider
     admin_confider = check_admin()
 
-
     if request.method == "POST":
         select = request.form.get('comp_select')
         if select == "to-high":
@@ -47,6 +46,12 @@ def home():
 
         if select == "to-low":
             products = Products.query.order_by(desc(Products.price)).all()
+
+        if select == "prop":
+            products = Products.query.filter_by(type='prop').all()
+
+        if select == "clothes":
+            products = Products.query.filter_by(type='clothes').all()
 
     else:
         products = Products.query.order_by(Products.id).all()
@@ -178,10 +183,27 @@ def product_page(id):
 
 @app.route('/delete/<int:id>/Hnecfji2ekdme4efjdk4;gJKJnfkdjne4rfkl;dfj;OIPE(o')
 def delete(id):
-    u = db.session.get(Products, id)
-    db.session.delete(u)
-    db.session.commit()
-    return redirect('/')
+
+   engine = create_engine("sqlite:///instance/base.db", echo=True)
+   meta = MetaData(engine)
+   comm = Table("Comments", meta, autoload=True)
+   conn = engine.connect()
+   pi = id
+
+   mass_del_com=[]
+   s=select(comm).where(comm.c.prod_id == pi)
+   result=conn.execute(s)
+   for raw in result:
+       mass_del_com.append(raw[0])
+   for idr in mass_del_com:
+       s = comm.delete().where(comm.c.id == idr)
+       conn.execute(s)
+
+   u = db.session.get(Products, id)
+   db.session.delete(u)
+   db.session.commit()
+
+   return redirect('/')
 
 
 # РЕДАКТИРОВАНИЕ ТОВАРА (АДМИН)
