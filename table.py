@@ -35,6 +35,7 @@ class Comments(db.Model):
     prod_id=db.Column(db.Integer)
     like=db.Column(db.Integer)
     comment=db.Column(db.Text)
+    user=db.Column(db.Text)
 
 
 with app.app_context():
